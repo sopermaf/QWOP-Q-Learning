@@ -11,8 +11,7 @@ y = 239
 w = 618
 h = 265 #bbox specifies specific region (bbox= x,y,width,height)
 
-def load_digits():
-    
+def load_digits():    
     onlyfiles = [ f for f in listdir(mypath) if isfile(join(mypath,f)) ]
     images = np.empty(len(onlyfiles), dtype=object)
     for n in range(0, len(onlyfiles)):
@@ -36,7 +35,7 @@ def format_output(total_coords, last_output):
             if("-" not in output): output += "-" #if coord is '-' and not in output, append   
         elif(("." not in output) or ("." in output and output.index(".") is len(output)-1)): output += str(coord[1])
     
-    output = replace(fst, lst, output) 
+    output = replace(output) 
     if((last_output == "3.9" or last_output == "4" or last_output == "4.1") and output == "44"): output = "4" #special case.    
     return output
     
