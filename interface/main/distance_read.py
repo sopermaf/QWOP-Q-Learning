@@ -3,13 +3,20 @@ import numpy as np
 import cv2
 from os import listdir
 from os.path import isfile, join
+import pyautogui
+import time
 
+#(67, 31) is always w and h.
+
+
+frames = 0
 #CHANGE THE FOLLOWING TO SUIT YOUR SYSTEM
-mypath='/Users/tadhgriordan/Documents/interface/images/' # 
-x = 535
-y = 239
-w = 618
-h = 265 #bbox specifies specific region (bbox= x,y,width,height)
+mypath='/Users/tadhgriordan/Documents/interface/images/digits' # 
+start_coords = pyautogui.locateOnScreen('start_distance.png') 
+x = start_coords[0]
+y = start_coords[1]
+w = start_coords[0]+70
+h = start_coords[1]+40
 
 def load_digits():    
     onlyfiles = [ f for f in listdir(mypath) if isfile(join(mypath,f)) ]
@@ -43,7 +50,10 @@ images = load_digits()
 last_output = ""
 output = ""
 
+
+start_time = time.clock()
 while(True):
+
     img = ImageGrab.grab(bbox=(x,y,w,h)) #bbox specifies specific region (bbox= x,y,width,height)
     img_np = np.array(img)
 
@@ -64,12 +74,9 @@ while(True):
     print("output: " + output)
     last_output = output
              
-    #cv2.imshow("PyQwopper", frame)
-    #cv2.waitKey(1)
+    cv2.imshow("PyQwopper", frame)
+    cv2.waitKey(1)
+    current_time = time.clock()
+    frames+=1
+    print("FPS: " + str(frames/(current_time-start_time)))
 cv2.destroyAllWindows()
-
-#co-ordinates for full box: (317,253,960,650)
-#co-ordinates for distance only: (535,239,608,265)
-
-
-
