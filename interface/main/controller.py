@@ -7,15 +7,8 @@ class Controller(object):
     def __init__(self):
         print("Controller started")
 
-    def check_for_end(self):
-        img = ImageGrab.grab(bbox=(restart_x, restart_y, restart_w, restart_h)) 
-        img_np = np.array(img)
-        frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)       
-        result = cv2.matchTemplate(frame,restart_image,cv2.TM_CCOEFF_NORMED)
-        threshold = 0.71
-        match_indices = np.arange(result.size)[(result>threshold).flatten()]      
-        coords = np.unravel_index(match_indices,result.shape) #coordinate of match(s)
-        if(len(coords[1])>0):
+    def check_for_end(self): 
+        if(check_for_restart_image()):
             self.keypress(" ", "end")
             
     def keypress(self, char, action):
@@ -39,9 +32,13 @@ class Controller(object):
             self.check_for_end()
     
     def start(self):
-        start_game = pyautogui.locateCenterOnScreen(path_images_control+'click_to_begin.png')
+        start_game = [player_x+100,player_y+100]
         pyautogui.click(start_game)
         pyautogui.click(start_game)
         self.running()
 
-
+'''
+if __name__ == "__main__":
+    c = Controller()
+    c.start()
+'''
