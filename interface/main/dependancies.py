@@ -9,15 +9,34 @@ from time import sleep
 import pyautogui
 import cv2
 import random
+import threading
 
 #----------------------------------------------GLOBALS---------------------------------------------------------------#
-print("loading globals..")
-path='/Users/tadhgriordan/Documents/interface/'  
-path_main = path+'main/'
-path_images_digits = path+'images/digits/'
-path_images_control = path+'images/control/'
+print("loading globals..")  
+dir = os.path.dirname(__file__)
+path_images_digits = dir+'/images/digits/'
+path_images_control = dir+'/images/control/'
 
+cap = cv2.VideoCapture(3)
 
+lock = threading.Lock()
+last_frame = ''
+def get_frame():
+    lock.acquire()
+    ret, frame = cap.read()
+    lock.release()
+    return frame
+    
+def get_coords(image,threshold):   
+    ret, frame = cap.read()     
+    frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
+    result = cv2.matchTemplate(frame,image,cv2.TM_CCOEFF_NORMED)
+    match_indices = np.arange(result.size)[(result>threshold).flatten()]      
+    coords = np.unravel_index(match_indices,result.shape) #coordinate of match(s)
+    if(len(coords[1])>0):        
+        return [coords[1][0],coords[0][0]]
+    else: return None
+       
 def load_images(path):    
     onlyfiles = [ f for f in listdir(path) if isfile(join(path,f)) ]
     images = np.empty(len(onlyfiles), dtype=object)
@@ -27,27 +46,34 @@ def load_images(path):
     
 digits = load_images(path_images_digits)
 controls = load_images(path_images_control)
-
-#Distance screen at game start.
-distance_coords = pyautogui.locateOnScreen(path_images_control+'start_distance.png') 
-distance_x = distance_coords[0]
-distance_y = distance_coords[1]
-distance_w = distance_x+70
-distance_h = distance_y+40
+digits = digits[1:]
+controls = controls[1:] #pops first (empty) element
 
 #restart screen at game end.
-restart_image = cv2.cvtColor(controls[3], cv2.COLOR_BGR2GRAY) #for some reason 'images' is indexed starting from 1. '0' is a null image or something
-start_coords = pyautogui.locateOnScreen(path_images_control+'click_to_begin.png')
-restart_x = start_coords[0]+75
-restart_y = start_coords[1]+125
-restart_w = restart_x+240
-restart_h = restart_x+60
+def check_for_restart_image():
+    restart_image = controls[2]
+    restart_coords = get_coords(restart_image,0.8)
+    if(restart_coords==None): return False
+    else: return True
+
+#Distance screen at game start.
+start_distance_image = controls[3]
+distance_height, distance_width, distance_channels = start_distance_image.shape 
+distance_coords = get_coords(start_distance_image,0.9) 
+distance_x = distance_coords[0]-5
+distance_y = distance_coords[1]
+distance_w = distance_width+(distance_width/5)
+distance_h = distance_height+(distance_height/5)
+
 
 #player coordinates during game running.
-player_coords = pyautogui.locateOnScreen(path_images_control+'start_screen.png')
-player_x = player_coords[0]
-player_y = player_coords[1]+85  
-player_w = player_x+600
-player_h = player_y+315
+start_screen_image = controls[4]
+start_height, start_width, start_channels = start_screen_image.shape 
+start_screen_coords = get_coords(start_screen_image, 0.9)
+player_x = start_screen_coords[0]
+player_y = start_screen_coords[1]+45
+player_w = start_width
+player_h = start_height-45
 print("Globals loaded.")
+
 #----------------------------------------------GLOBALS---------------------------------------------------------------#
