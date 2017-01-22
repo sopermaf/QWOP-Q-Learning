@@ -1,12 +1,12 @@
 from dependancies import *
 
 class Reader(object):
-      distance_last_output = 0
+      distance_last_output = 0.2
       
       def __init__(self):
         print("Reader started")
-        
-      def format_distance_output(self, total_coords):    
+      
+      def format_output(self, total_coords):
         total_coords.sort(key=lambda x: x[0]) #sort coordinates by x value
         output = ""
         for coord in total_coords:
@@ -15,21 +15,29 @@ class Reader(object):
             elif(coord[1]==11): 
                 if("-" not in output): output += "-" #if coord is '-' and not in output, append   
             elif(("." not in output) or ("." in output and output.index(".") is len(output)-1)): output += str(coord[1])
-        
+    
         #get index of first value after "-" (if present) and last value before dot (if present) - delete everything in between.
         fst = 1 if "-" in output else 0
-        lst = len(output)-1 if not("." in output) else output.index(".")-1   
-        if(not(fst==lst)): output[0:fst+1] + output[lst:] 
+        lst = len(output)-1 if not("." in output) else output.index(".")-1
+        if(not(fst==lst)): 
+            output = output[0:fst+1] + output[lst:]  
+    
+        #special case. some values repeat, this removes them.
+        if(self.distance_last_output < 10 and not(output == "10")): 
+            fst = 1 if "-" in output else 0
+            if(("." in output and (output.index(".")==fst+2)) or (len(output)==fst+2)):
+                output = output.replace(output[fst],"",1)        
+        return float(output)
         
-        if((self.distance_last_output == "3.9" or self.distance_last_output == "4" or self.distance_last_output == "4.1") and output == "44"): output = "4" #special case.    
-        return output
-      
       def get_distance(self):
         while(True):
-            img = ImageGrab.grab(bbox=(distance_x,distance_y,distance_w,distance_h)) #bbox specifies specific region (bbox= x,y,width,height)
-            img_np = np.array(img)
-            frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
-            threshold = 0.884
+            #parameters for screen: ManyCam 768p, half size frame. frame not shown. full screen chrome
+            ret, frame = cap.read()    
+            frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
+            frame = frame[distance_y:distance_y+distance_h, distance_x:distance_x+distance_w] #[y: y + h, x: x + w]   
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            threshold = 0.86
+
             total_coords = []
             for count, image in enumerate(digits):
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -38,17 +46,17 @@ class Reader(object):
                 coords = np.unravel_index(match_indices,result.shape) #coordinate of match(s)
                 if len(coords[1])>0: #only coords[1] matters. its of size 2, 0 has y value and 1 has x i think. if match(s) found:
                     for np_coord in coords[1]:
-                        total_coords.append([np_coord, count]) # add coordinate and digit to total coordinates
+                        total_coords.append([np_coord, count]) # add coordinate and digit to total coordinates              
     
-            output = self.format_distance_output(total_coords)  
-            self.distance_last_output = output
-            print(output)
-            #return output
+            output = self.format_output(total_coords)
+            if(self.distance_last_output!=output):
+                print(str(output))
+                self.distance_last_output = output
       
       def get_player(self):
-        img = ImageGrab.grab(bbox=(player_x,player_y,player_w,player_h)) #bbox specifies specific region (bbox= x,y,width,height)
-        img_np = np.array(img)
-        frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
-        return frame
-
-
+        while(True):
+            print("getting frame")
+            ret, frame = cap.read()    
+            frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
+            frame = frame[player_y:player_y+player_h, player_x:player_x+player_w] #[y: y + h, x: x + w]   
+            return frame
