@@ -52,7 +52,7 @@ class Controller(object):
             self.keyInterpret("p", keyCombo)
             
             #add to history
-            self.key_history += move
+            self.key_history += " + " move
             
             #check for end
             sleep(random.uniform(0,0.05))       
