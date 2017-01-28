@@ -17,7 +17,7 @@ dir = os.path.dirname(__file__)
 path_images_digits = dir+'/images/digits/'
 path_images_control = dir+'/images/control/'
 
-cap = cv2.VideoCapture(3)
+cap = cv2.VideoCapture(1)
 
 lock = threading.Lock()
 last_frame = ''

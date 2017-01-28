@@ -5,32 +5,63 @@ def get_rand_bool():
 
 class Controller(object):
     def __init__(self):
+        self.key_history = ""  #will store the key strokes for each game
         print("Controller started")
 
     def check_for_end(self): 
         if(check_for_restart_image()):
+            #store key press somewhere??
             self.keypress(" ", "end")
             
     def keypress(self, char, action):
         if(action is "down"): pyautogui.keyDown(char)
         if(action is "up"): pyautogui.keyUp(char)
         if(action is "end"): pyautogui.press(char)
+    
+    def keyInterpret(self, char, keyCombo):
+        if char in keyCombo:
+            pyautogui.keyDown("q")
+        else:
+            pyautogui.keyUp("q")
+    
+    def generateKeyCombo(self):
+        down = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
+        key_combo = ""
         
+        #generate the string combo
+        if down[0]: key_combo += "q"
+        if down[1]: key_combo += "w"
+        if down[2]: key_combo += "o"
+        if down[3]: key_combo += "p"
+        
+        return key_combo
+    
+    #function sending keypress
     def running(self):  
         while(True): 
-            downs = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
-            ups = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
-            if(downs[0]): self.keypress("q","down")
-            if(downs[1]): self.keypress("w","down")
-            if(downs[2]): self.keypress("o","down")
-            if(downs[3]): self.keypress("p","down")
-            if(ups[0]): self.keypress("q","up")
-            if(ups[1]): self.keypress("w","up")
-            if(ups[2]): self.keypress("o","up")
-            if(ups[3]): self.keypress("p","up")
+            #(1) capture the string of keypresses
+            #(2) store the keypresses when the game has finished for evaluation
+            
+            #generate the random move
+            move = self.generateKeyCombo()
+            
+            #execute the move
+            self.keyInterpret("q", keyCombo)
+            self.keyInterpret("w", keyCombo)
+            self.keyInterpret("o", keyCombo)
+            self.keyInterpret("p", keyCombo)
+            
+            #add to history
+            self.key_history += move
+            
+            #check for end
             sleep(random.uniform(0,0.05))       
-            self.check_for_end()
-    
+            self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?
+            
+            #if check_end == true: store AND genetic evaluation
+            
+            
+            
     def start(self):
         start_game = [player_x+100,player_y+100]
         pyautogui.click(start_game)
