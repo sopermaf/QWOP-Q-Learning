@@ -40,3 +40,23 @@ def mutation(genetic_sequence):
     
     return new_gen
 
+#returns an list of lists, with x[0] = A_splice, x[1] = B_splice
+def single_splice(genetic_A, genetic_B):
+    size = len(genetic_A)
+    if(len(genetic_B) > size):
+        size = len(genetic_B)
+    
+    cut = random.randint(1, size-2) #splice cuts everything above this
+    
+    #make the cuts
+    new1 = genetic_A[:cut]
+    new1.extend(genetic_B[cut:])
+    new2 = genetic_B[:cut]
+    new2.extend(genetic_A[cut:])
+ 
+    #return as a list of the new spliced lists
+    cl = []
+    cl.append(new1)
+    cl.append(new2)
+    return cl
+    
