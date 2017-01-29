@@ -21,6 +21,7 @@ cap = cv2.VideoCapture(1)
 
 lock = threading.Lock()
 last_frame = ''
+
 def get_frame():
     lock.acquire()
     ret, frame = cap.read()
@@ -74,6 +75,10 @@ player_x = start_screen_coords[0]
 player_y = start_screen_coords[1]+45
 player_w = start_width
 player_h = start_height-45
+
+#genetic alphabet
+alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
+
 print("Globals loaded.")
 
 #----------------------------------------------GLOBALS---------------------------------------------------------------#

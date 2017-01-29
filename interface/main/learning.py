@@ -15,9 +15,13 @@ def generateKeyCombo():
 def get_rand_bool():
     return bool(random.getrandbits(1))
     
-for x in range (0,10):   
-    move = generateKeyCombo()
-    if "q" in move:
-        print("CONTAINS A Q", move)
-    else: 
-        print(move)
+# for x in range (0,10):   
+    # move = generateKeyCombo()
+    # if "q" in move:
+        # print("CONTAINS A Q", move)
+    # else: 
+        # print(move)
+
+alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
+
+print(alphabet)

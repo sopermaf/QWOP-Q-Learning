@@ -55,7 +55,9 @@ class Controller(object):
             self.key_history += " + " move
             
             #check for end
-            sleep(random.uniform(0,0.05))       
+            #sleep(random.uniform(0,0.05))
+            sleep(0.150)    #150ms sleep between steps like in the paper on genetic
+            #read distance
             self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?
             
             #if check_end == true: store AND genetic evaluation
