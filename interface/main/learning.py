@@ -1,27 +1,22 @@
 import random
-
-def generateKeyCombo():
-    down = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
-    key_combo = ""
-    
-    #generate the string combo
-    if down[0]: key_combo += "q"
-    if down[1]: key_combo += "w"
-    if down[2]: key_combo += "o"
-    if down[3]: key_combo += "p"
-    
-    return key_combo
+from dependancies import *
 
 def get_rand_bool():
     return bool(random.getrandbits(1))
+
+def create_runner():
+    new_runner = []
+    end_creation = False
     
-# for x in range (0,10):   
-    # move = generateKeyCombo()
-    # if "q" in move:
-        # print("CONTAINS A Q", move)
-    # else: 
-        # print(move)
+    while end_creation == False and len(new_runner) < MAX_NUM_GENES:
+        new_gene = random.randint(0,15)
+        new_runner.append(new_gene)
+        
+        if len(new_runner) < MIN_NUM_GENES:
+            end_creation = False
+        else:
+            end_creation = get_rand_bool()
+        
+    return new_runner
 
 alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
-
-print(alphabet)

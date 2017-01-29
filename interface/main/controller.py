@@ -5,7 +5,6 @@ def get_rand_bool():
 
 class Controller(object):
     def __init__(self):
-        #self.key_history = ""  #will store the key strokes for each game
         print("Controller started")
 
     def check_for_end(self): 
@@ -24,6 +23,17 @@ class Controller(object):
         else:
             pyautogui.keyUp(char)
     
+    #takes genetic encoding number/letter and decodes into keypress
+    def makeMove(self, move):
+        #turn the number into the string
+        move_decoded = alphabet[move]
+        
+        #execute the relevant key presses for the string
+        self.keyInterpret("q", move_decoded)   
+        self.keyInterpret("w", move_decoded)
+        self.keyInterpret("o", move_decoded)
+        self.keyInterpret("p", move_decoded)
+    
     def generateKeyCombo(self):
         down = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
         key_combo = ""
@@ -39,31 +49,15 @@ class Controller(object):
     #function sending keypress
     def running(self):  
         while(True): 
-            #(1) capture the string of keypresses
-            #(2) store the keypresses when the game has finished for evaluation
             
-            #generate the random move
-            move = self.generateKeyCombo()
+            #run game for a given runner genes
+            #get fitness
+            #store the info
             
-            #execute the move
-            self.keyInterpret("q", move)
-            self.keyInterpret("w", move)
-            self.keyInterpret("o", move)
-            self.keyInterpret("p", move)
-            
-            #add to history
-            #self.key_history += " + " move
-            
-            #check for end
-            #sleep(random.uniform(0,0.05))
             sleep(0.150)    #150ms sleep between steps like in the paper on genetic
             #read distance
-            self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?
-            
-            #if check_end == true: store AND genetic evaluation
-            
-            
-            
+            self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?          
+                        
     def start(self):
         start_game = [player_x+100,player_y+100]
         pyautogui.click(start_game)
