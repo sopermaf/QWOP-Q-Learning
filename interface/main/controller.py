@@ -5,7 +5,7 @@ def get_rand_bool():
 
 class Controller(object):
     def __init__(self):
-        self.key_history = ""  #will store the key strokes for each game
+        #self.key_history = ""  #will store the key strokes for each game
         print("Controller started")
 
     def check_for_end(self): 
@@ -18,11 +18,11 @@ class Controller(object):
         if(action is "up"): pyautogui.keyUp(char)
         if(action is "end"): pyautogui.press(char)
     
-    def keyInterpret(self, char, keyCombo):
-        if char in keyCombo:
-            pyautogui.keyDown("q")
+    def keyInterpret(self, char, key_combo):
+        if char in key_combo:
+            pyautogui.keyDown(char)
         else:
-            pyautogui.keyUp("q")
+            pyautogui.keyUp(char)
     
     def generateKeyCombo(self):
         down = [get_rand_bool(),get_rand_bool(),get_rand_bool(),get_rand_bool()]
@@ -46,13 +46,13 @@ class Controller(object):
             move = self.generateKeyCombo()
             
             #execute the move
-            self.keyInterpret("q", keyCombo)
-            self.keyInterpret("w", keyCombo)
-            self.keyInterpret("o", keyCombo)
-            self.keyInterpret("p", keyCombo)
+            self.keyInterpret("q", move)
+            self.keyInterpret("w", move)
+            self.keyInterpret("o", move)
+            self.keyInterpret("p", move)
             
             #add to history
-            self.key_history += " + " move
+            #self.key_history += " + " move
             
             #check for end
             #sleep(random.uniform(0,0.05))
