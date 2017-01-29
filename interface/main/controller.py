@@ -1,4 +1,6 @@
 from dependancies import *
+from learning import *
+import time
     
 def get_rand_bool():
     return bool(random.getrandbits(1))
@@ -46,14 +48,32 @@ class Controller(object):
         
         return key_combo
     
-    #function sending keypress
+    def runner_fitness_test(self, genetic):
+        distance = 0
+        index = 0
+        r = Reader()
+        stop_time = 60 + time.clock()
+        
+        #loop executes the run until crashed state or time is finished
+        while check_for_restart_image() == False and time.clock() <= stop_time:
+            self.makeMove(genetic[index])   #make an individual key combination
+            index += 1            
+            
+            if index >= len(genetic):   #repeat the genetic sequence when the end is reached
+                index = 0
+            
+            sleep(0.150)
+        
+        #check that the runner didn't crash, if so return the distance
+        if check_for_restart_image() == False:
+            distance = r.get_distance()
+        
+        return distance
+    
     def running(self):  
         while(True): 
-            
-            #run game for a given runner genes
-            #get fitness
-            #store the info
-            
+            gen_sequence = create_runner()
+            self.runner_fitness_test(gen_sequence)
             sleep(0.150)    #150ms sleep between steps like in the paper on genetic
             #read distance
             self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?          
@@ -63,9 +83,3 @@ class Controller(object):
         pyautogui.click(start_game)
         pyautogui.click(start_game)
         self.running()
-
-'''
-if __name__ == "__main__":
-    c = Controller()
-    c.start()
-'''

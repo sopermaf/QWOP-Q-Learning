@@ -1,5 +1,9 @@
 import random
-from dependancies import *
+import time
+
+#genetic alphabet
+MIN_NUM_GENES = 8
+MAX_NUM_GENES = 16
 
 def get_rand_bool():
     return bool(random.getrandbits(1))
@@ -19,4 +23,9 @@ def create_runner():
         
     return new_runner
 
-alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
+start = time.clock()
+
+for x in range(0,500000):
+    y = x
+    
+print(time.clock() - start)

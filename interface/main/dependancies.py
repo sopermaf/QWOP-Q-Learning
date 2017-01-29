@@ -76,10 +76,8 @@ player_y = start_screen_coords[1]+45
 player_w = start_width
 player_h = start_height-45
 
-#genetic alphabet
+#genetic globals
 alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
-MIN_NUM_GENES = 8
-MAX_NUM_GENES = 16
 
 print("Globals loaded.")
 
