@@ -161,6 +161,7 @@ def final_process():
                 genetic = convert_string_to_int_alphabet(str(torus[i][j][0]))
                 new_fitness = c.runner_fitness_test(genetic)
                 torus[i][j][1] = new_fitness
+                
                 #restart game
                 c.check_for_end()
                 
@@ -172,7 +173,8 @@ def final_process():
                 do_splice = single_splice(list(torus[i][j][0]),list(torus[best_neighbour[0]][best_neighbour[1]][0]))
                 
                 torus[i][j][0] = list_to_string(do_splice[0]) #********DATA CORRUPTION WAS HAPPENING HERE FROM LIST -> STRING
-                #print(torus[i][j][0]) 
+                torus[best_neighbour[0]][best_neighbour[1]][0] = list_to_string(do_splice[1]) #********DATA CORRUPTION WAS HAPPENING HERE FROM LIST -> STRING
+                #print(torus[i][j][0]) #******PRINTING HERE SHOWED THE CORRUPTION AS IT HAPPENED********
 
         #mutation stage   
         for i in range(0,col_length):

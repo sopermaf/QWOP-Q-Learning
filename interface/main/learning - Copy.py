@@ -152,26 +152,46 @@ def final_process():
     while(True):
         for i in range(0,col_length):
             for j in range(0,row_length):
+                #perform run
+                #print("indexes: " + str(i) + " " + str(j))
                 print(str(torus[i][j][0]))
                 genetic = convert_string_to_int_alphabet(str(torus[i][j][0]))
                 print(genetic)
-                new_fitness = c.runner_fitness_test(genetic)
+                new_fitness = 0#c.runner_fitness_test(genetic)
+                #if(new_fitness is None): new_fitness = 0
                 torus[i][j][1] = new_fitness
+                
                 #restart game
-                c.check_for_end()
+                #c.check_for_end()
         
         #splicing stage
+        print("******SPLICING*****")
         for i in range(0,col_length):
             for j in range(0,row_length):
-                # input("press Enter")
+                #input("press Enter")
 
                 #get best neighbour
                 best_neighbour = get_best_neighbour(torus,i,j)
+                
+                #splice
                 do_splice = single_splice(list(torus[i][j][0]),list(torus[best_neighbour[0]][best_neighbour[1]][0]))
                 
                 torus[i][j][0] = list_to_string(do_splice[0])
                 print(torus[i][j][0])
- 
+                torus[best_neighbour[0]][best_neighbour[1]][0] = list_to_string(do_splice[1])
+                
+                #print("me = ", str(i), ",", str(j), "best = ", best_neighbour)
+                #print(do_splice)
+                #print(do_splice[0])
+                #print(do_splice[1])
+
+def final_2():
+    for i in range(0,col_length):
+        for j in range(0,row_length):
+            print("indexes: " + str(i) + " " + str(j))
+            print(torus[i][j][0])
+            genetic = convert_string_to_int_alphabet(str(torus[i][j][0]))
+            print(genetic)
         
 if __name__ == "__main__": 
     final_process()
