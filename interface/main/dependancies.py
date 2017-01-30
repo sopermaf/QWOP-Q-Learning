@@ -10,18 +10,27 @@ import pyautogui
 import cv2
 import random
 import threading
+from operator import itemgetter
 
 #----------------------------------------------GLOBALS---------------------------------------------------------------#
 print("loading globals..")  
 dir = os.path.dirname(__file__)
 path_images_digits = dir+'/images/digits/'
 path_images_control = dir+'/images/control/'
+alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
+alphabet_string = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"]
+MAX_INITIAL_RUNNERS = 5000
+MIN_NUM_GENES = 8
+MAX_NUM_GENES = 24
+NUM_TYPES_GENES = 16
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(3)
 
+def get_rand_bool():
+    return bool(random.getrandbits(1))
+    
 lock = threading.Lock()
 last_frame = ''
-
 def get_frame():
     lock.acquire()
     ret, frame = cap.read()
@@ -65,6 +74,7 @@ distance_x = distance_coords[0]-5
 distance_y = distance_coords[1]
 distance_w = distance_width+(distance_width/5)
 distance_h = distance_height+(distance_height/5)
+print("distance: " + str(distance_x) + " " + str(distance_y) + " " + str(distance_w) + " " + str(distance_h))
 
 
 #player coordinates during game running.
@@ -75,10 +85,6 @@ player_x = start_screen_coords[0]
 player_y = start_screen_coords[1]+45
 player_w = start_width
 player_h = start_height-45
-
-#genetic globals
-alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
-
 print("Globals loaded.")
 
 #----------------------------------------------GLOBALS---------------------------------------------------------------#
