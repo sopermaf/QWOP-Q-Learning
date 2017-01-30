@@ -1,15 +1,20 @@
-from dependancies import *
-import controller
+#from dependancies import *
+#import controller
 import random
 from operator import itemgetter
 
-#initial_file_write = open("initial.txt", 'w')
 initial_file_read = open("initial.txt", 'r')
-final_file_write = open("final.text", "w")
 
 row_length = 5
 col_length = 6
 total_length = row_length * col_length
+
+alphabet = ["", "p", "o", "op", "w", "wp", "wo", "wop", "q", "qp", "qo", "qop", "qw", "qwp", "qwo", "qwop"]
+alphabet_string = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"]
+MAX_INITIAL_RUNNERS = 5000
+MIN_NUM_GENES = 8
+MAX_NUM_GENES = 24
+NUM_TYPES_GENES = 16
 
 torus = [[['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
          [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
@@ -110,25 +115,13 @@ def single_splice(genetic_A, genetic_B):
 
 def convert_string_to_int_alphabet(string):
     int = []
-    string = list(string)
-    for letter in string:    
+    new_string = list(string)
+    #print(new_string)
+    for letter in string:
+        #if letter in alphabet_string:
         int.append(alphabet_string.index(letter))    
     return int
     
-'''  To train first set of runners.
-def initial():
-    c = controller.Controller()
-    c.start()
-    num_runners = 0
-    while(num_runners<MAX_INITIAL_RUNNERS):
-        runner = create_runner()
-        fitness_result = c.runner_fitness_test(runner)
-        runner_str = int_to_alphabet(runner)
-        initial_file_write.write(runner_str + " " + str(fitness_result) + "\n")
-        c.check_for_end()
-        num_runners+=1
-'''
-
 def post_process(): #take best 30 from runners 
     with initial_file_read as f:
         content = f.readlines()
@@ -150,43 +143,36 @@ def list_to_string(list):
     return string
     
 def final_process(): 
-    c = controller.Controller()
-    c.start()
+    #best_content = post_process()
+    #best_content = random.sample(best_content, len(best_content)) #randomize values
+    #torus = split_list(best_content) #split into 5x6
+    # c = controller.Controller()
+    # c.start()
     iterations = 0
     while(True):
-        #update the fitness metrics
         for i in range(0,col_length):
             for j in range(0,row_length):
-                #perform run
+                print(str(torus[i][j][0]))
                 genetic = convert_string_to_int_alphabet(str(torus[i][j][0]))
+                print(genetic)
                 new_fitness = c.runner_fitness_test(genetic)
                 torus[i][j][1] = new_fitness
                 #restart game
                 c.check_for_end()
-                
+        
         #splicing stage
         for i in range(0,col_length):
             for j in range(0,row_length):
+                # input("press Enter")
+
                 #get best neighbour
                 best_neighbour = get_best_neighbour(torus,i,j)
                 do_splice = single_splice(list(torus[i][j][0]),list(torus[best_neighbour[0]][best_neighbour[1]][0]))
                 
-                torus[i][j][0] = list_to_string(do_splice[0]) #********DATA CORRUPTION WAS HAPPENING HERE FROM LIST -> STRING
-                #print(torus[i][j][0]) 
-
-        #mutation stage   
-        for i in range(0,col_length):
-            for j in range(0,row_length):
-                torus[i][j][0] = mutation(list(torus[i][j][0]))
+                torus[i][j][0] = list_to_string(do_splice[0])
+                print(torus[i][j][0])
+ 
         
-        #write all to file every torus completion
-        #*******NEED TO CLOSE THE FILE OR CHANGE FILE NAME EACH TIME BECAUSE IT BECOMES HUGE*************
-        final_file_write.write("Iteration: " + str(iterations) + "\n")
-        for i in range(0,col_length):
-            for j in range(0,row_length):
-                final_file_write.write(torus[i][j][0] + " " + torus[i][j][1]  + "\n")
-        final_file_write.write("\n")
-                    
 if __name__ == "__main__": 
     final_process()
-      
+#print(torus)
