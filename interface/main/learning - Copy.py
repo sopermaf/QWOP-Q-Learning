@@ -83,8 +83,11 @@ def mutation(genetic_sequence):
     #print (gene_num, new_mutation)
     
     #ensure the mutation cannnot be the same as before
-    while new_mutation == genetic_sequence[gene_num]:
+    while new_mutation == alphabet_string.index(genetic_sequence[gene_num]):
        new_mutation = random.randint(0,NUM_TYPES_GENES-1)
+    
+    #convert from num to string
+    new_mutation = alphabet_string[new_mutation]
     
     new_gen = list(genetic_sequence)
     new_gen[gene_num] = new_mutation
@@ -177,13 +180,21 @@ def final_process():
                 do_splice = single_splice(list(torus[i][j][0]),list(torus[best_neighbour[0]][best_neighbour[1]][0]))
                 
                 torus[i][j][0] = list_to_string(do_splice[0])
-                print(torus[i][j][0])
+                #print(torus[i][j][0])
                 torus[best_neighbour[0]][best_neighbour[1]][0] = list_to_string(do_splice[1])
                 
                 #print("me = ", str(i), ",", str(j), "best = ", best_neighbour)
                 #print(do_splice)
                 #print(do_splice[0])
                 #print(do_splice[1])
+                
+        #mutation stage  
+        print("****MUTATION********")
+        for i in range(0,col_length):
+            for j in range(0,row_length):
+                input("press Enter")
+                torus[i][j][0] = mutation(list(torus[i][j][0]))
+                print(torus[i][j][0])
 
 def final_2():
     for i in range(0,col_length):

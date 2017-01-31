@@ -78,8 +78,11 @@ def mutation(genetic_sequence):
     #print (gene_num, new_mutation)
     
     #ensure the mutation cannnot be the same as before
-    while new_mutation == genetic_sequence[gene_num]:
+    while new_mutation == alphabet_string.index(genetic_sequence[gene_num]):
        new_mutation = random.randint(0,NUM_TYPES_GENES-1)
+    
+    #convert from num to string
+    new_mutation = alphabet_string[new_mutation]
     
     new_gen = list(genetic_sequence)
     new_gen[gene_num] = new_mutation
