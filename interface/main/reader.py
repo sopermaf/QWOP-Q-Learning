@@ -28,8 +28,7 @@ class Reader(object):
             if(("." in output and (output.index(".")==fst+2)) or (len(output)==fst+2)):
                 output = output.replace(output[fst],"",1)        
         return float(output)
-
-        
+       
       def get_distance(self):
         try:
             #parameters for screen: ManyCam 768p, half size frame. frame not shown. full screen chrome
@@ -55,13 +54,4 @@ class Reader(object):
                 return output
         except ValueError:
             return 0.2
-            
-      '''
-      def get_player(self):
-        while(True):
-            print("getting frame")
-            ret, frame = cap.read()    
-            frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
-            frame = frame[player_y:player_y+player_h, player_x:player_x+player_w] #[y: y + h, x: x + w]   
-            return frame
-     '''
+      

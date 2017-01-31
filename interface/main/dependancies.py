@@ -57,7 +57,7 @@ def load_images(path):
 digits = load_images(path_images_digits)
 controls = load_images(path_images_control)
 digits = digits[1:]
-controls = controls[1:] #pops first (empty) element
+controls = controls[1:]
 
 #restart screen at game end.
 def check_for_restart_image():

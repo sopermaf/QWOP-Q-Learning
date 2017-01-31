@@ -64,29 +64,9 @@ class Controller(object):
         #check that the runner didn't crash, if so return the distance. DECIDED TO USE DISTANCE INSTEAD. WERENT GETTING FAR.
         r.distance_last_output = 0.2
         return distance
-    '''
-    def running(self):  
-        while(True): 
-            gen_sequence = learning.create_runner()
-            self.runner_fitness_test(gen_sequence)
-            sleep(0.150)    #150ms sleep between steps like in the paper on genetic
-            #read distance
-            self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?          
-    ''' 
-    
+   
     def refresh(self):
         pyautogui.moveTo(player_x+200, player_y)  
         pyautogui.click()
         pyautogui.hotkey('command', 'r') 
         time.sleep(3)   
-        
-    def start(self):
-        start_game = [player_x+200,player_y+200]
-        pyautogui.click(start_game)
-        pyautogui.click(start_game)
-        #self.running()
-
-'''
-if __name__ == "__main__": 
-    start()
-'''

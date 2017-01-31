@@ -117,25 +117,6 @@ def convert_string_to_int_alphabet(string):
     for letter in string:  
         int.append(alphabet_string.index(letter))    
     return int
-    
-'''#  To train first set of runners.
-def initial():
-    c = controller.Controller()
-    c.start()
-    num_runners = 0
-    while(num_runners<MAX_INITIAL_RUNNERS):
-        print("runner num: " + str(num_runners))
-        num_runners+=1
-        sleep(.5)
-        runner = create_runner()
-        fitness_result = c.runner_fitness_test(runner)
-        runner_str = int_to_alphabet(runner)
-        initial_file_write.write(runner_str + " " + str(fitness_result) + "\n")
-        c.check_for_end()        
-        if(num_runners%15==0): #periodically refresh to avoid memory leaks
-            c.refresh()
-            c.start()
-'''
 
 def post_process(): #take best 30 from runners 
     with initial_file_read as f:
@@ -199,7 +180,6 @@ def final_process():
         file.close()
         c.refresh()    
 if __name__ == "__main__": 
-    #initial()
     final_process()
     
     
