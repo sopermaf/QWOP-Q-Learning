@@ -4,8 +4,8 @@ class Reader(object):
       distance_last_output = 0.2
       
       def __init__(self):
-        print("Reader started")
-      
+        pass
+              
       def format_output(self, total_coords):
         total_coords.sort(key=lambda x: x[0]) #sort coordinates by x value
         output = ""
@@ -15,26 +15,27 @@ class Reader(object):
             elif(coord[1]==11): 
                 if("-" not in output): output += "-" #if coord is '-' and not in output, append   
             elif(("." not in output) or ("." in output and output.index(".") is len(output)-1)): output += str(coord[1])
-    
+
         #get index of first value after "-" (if present) and last value before dot (if present) - delete everything in between.
         fst = 1 if "-" in output else 0
         lst = len(output)-1 if not("." in output) else output.index(".")-1
         if(not(fst==lst)): 
             output = output[0:fst+1] + output[lst:]  
-    
+
         #special case. some values repeat, this removes them.
         if(self.distance_last_output < 10 and not(output == "10")): 
             fst = 1 if "-" in output else 0
             if(("." in output and (output.index(".")==fst+2)) or (len(output)==fst+2)):
                 output = output.replace(output[fst],"",1)        
         return float(output)
+
         
       def get_distance(self):
-        while(True):
+        try:
             #parameters for screen: ManyCam 768p, half size frame. frame not shown. full screen chrome
-            ret, frame = cap.read()    
+            _, frame = cap.read()   
             frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
-            frame = frame[distance_y:distance_y+distance_h, distance_x:distance_x+distance_w] #[y: y + h, x: x + w]   
+            frame = frame[int(distance_y):int(distance_y+distance_h), int(distance_x):int(distance_x+distance_w)] #[y: y + h, x: x + w]   
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             threshold = 0.86
 
@@ -47,12 +48,15 @@ class Reader(object):
                 if len(coords[1])>0: #only coords[1] matters. its of size 2, 0 has y value and 1 has x i think. if match(s) found:
                     for np_coord in coords[1]:
                         total_coords.append([np_coord, count]) # add coordinate and digit to total coordinates              
-    
+
             output = self.format_output(total_coords)
             if(self.distance_last_output!=output):
-                print(str(output))
                 self.distance_last_output = output
-      
+                return output
+        except ValueError:
+            return 0.2
+            
+      '''
       def get_player(self):
         while(True):
             print("getting frame")
@@ -60,3 +64,4 @@ class Reader(object):
             frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
             frame = frame[player_y:player_y+player_h, player_x:player_x+player_w] #[y: y + h, x: x + w]   
             return frame
+     '''

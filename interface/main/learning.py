@@ -2,21 +2,16 @@ from dependancies import *
 import controller
 import random
 from operator import itemgetter
+import re
+from datetime import datetime
 
-#initial_file_write = open("initial.txt", 'w')
-initial_file_read = open("initial.txt", 'r')
-final_file_write = open("final.text", "w")
+
+#initial_file_write = open("new_initial.txt", 'w')
+initial_file_read = open("from_here.txt", 'r')
 
 row_length = 5
 col_length = 6
 total_length = row_length * col_length
-
-torus = [[['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
-         [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
-         [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
-         [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
-         [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]], 
-         [['NNMJBACDOHIPIMKDIC', 2.4], ['KMNHMMEAOH', 2.8], ['LIDNJBDDHGAEN', 2.4], ['PGJHDLCIGNAMMJ', 2.2], ['HMAKOHAEGDGPDOMC', 2.4]]]                           
 
 def split_list(list):
     result = []
@@ -107,29 +102,39 @@ def single_splice(genetic_A, genetic_B):
     cl = []
     cl.append(new1)
     cl.append(new2)
-    cl[0] = str(cl[0])
-    cl[1] = str(cl[1])
-    return cl
+    strs = []
+    strs.append(re.sub(r'\W+', '', str(cl[0])))
+    strs.append(re.sub(r'\W+', '', str(cl[1])))
+    #print("splices: ")
+    #print(strs)
+    return strs
 
 def convert_string_to_int_alphabet(string):
     int = []
-    string = list(string)
-    for letter in string:    
+    string = re.sub(r'\W+', '', string)
+    print("alphabet: " + string)   
+    string = list(string)    
+    for letter in string:  
         int.append(alphabet_string.index(letter))    
     return int
     
-'''  To train first set of runners.
+'''#  To train first set of runners.
 def initial():
     c = controller.Controller()
     c.start()
     num_runners = 0
     while(num_runners<MAX_INITIAL_RUNNERS):
+        print("runner num: " + str(num_runners))
+        num_runners+=1
+        sleep(.5)
         runner = create_runner()
         fitness_result = c.runner_fitness_test(runner)
         runner_str = int_to_alphabet(runner)
         initial_file_write.write(runner_str + " " + str(fitness_result) + "\n")
-        c.check_for_end()
-        num_runners+=1
+        c.check_for_end()        
+        if(num_runners%15==0): #periodically refresh to avoid memory leaks
+            c.refresh()
+            c.start()
 '''
 
 def post_process(): #take best 30 from runners 
@@ -138,60 +143,66 @@ def post_process(): #take best 30 from runners
         content = [x.strip() for x in content] 
     for i,line in enumerate(content):
         content[i] = content[i].split(" ")
+        #print(content[i])
+        content[i][0] = str(content[i][0])
         try: content[i][1] = float(content[i][1]) #divide into numbers only
         except ValueError: content[i][1] = 0
     best_content = sorted(content, key=itemgetter(1))
     return best_content[len(best_content)-30:]
 
-def list_to_string(list):
-    string = ""
-    
-    for element in list:
-        if element in alphabet_string:
-            string += str(element)
-    
-    return string
-    
 def final_process(): 
+    best_content = post_process()
+    best_content = random.sample(best_content, len(best_content)) #randomize values
+    torus = split_list(best_content) #split into 5x6
     c = controller.Controller()
-    c.start()
-    iterations = 0
+    iteration = 22
     while(True):
-        #update the fitness metrics
+        print("Generation " + str(iteration) + "..")
+        c.start()
+        count = 0
         for i in range(0,col_length):
             for j in range(0,row_length):
                 #perform run
-                genetic = convert_string_to_int_alphabet(str(torus[i][j][0]))
+                sleep(.5)
+                count+=1
+                genetic = convert_string_to_int_alphabet(torus[i][j][0])
                 new_fitness = c.runner_fitness_test(genetic)
+                if(new_fitness is None): new_fitness = 0
                 torus[i][j][1] = new_fitness
-                
                 #restart game
                 c.check_for_end()
-                
-        #splicing stage
+                   
+        #splice
+        #print("splicing...")
         for i in range(0,col_length):
-            for j in range(0,row_length):
+            for j in range(0,row_length):     
                 #get best neighbour
                 best_neighbour = get_best_neighbour(torus,i,j)
                 do_splice = single_splice(list(torus[i][j][0]),list(torus[best_neighbour[0]][best_neighbour[1]][0]))
+                torus[i][j][0] = do_splice[0]
+                torus[best_neighbour[0]][best_neighbour[1]][0] = do_splice[1]
                 
-                torus[i][j][0] = list_to_string(do_splice[0]) #********DATA CORRUPTION WAS HAPPENING HERE FROM LIST -> STRING
-                torus[best_neighbour[0]][best_neighbour[1]][0] = list_to_string(do_splice[1]) #********DATA CORRUPTION WAS HAPPENING HERE FROM LIST -> STRING
-                #print(torus[i][j][0]) #******PRINTING HERE SHOWED THE CORRUPTION AS IT HAPPENED********
-
-        #mutation stage   
+        #print("mutating...")                
+        #mutate    
         for i in range(0,col_length):
             for j in range(0,row_length):
+                #print("pre mutation: " + my_str)
                 torus[i][j][0] = mutation(list(torus[i][j][0]))
-        
-        #write all to file every torus completion
-        #*******NEED TO CLOSE THE FILE OR CHANGE FILE NAME EACH TIME BECAUSE IT BECOMES HUGE*************
-        final_file_write.write("Iteration: " + str(iterations) + "\n")
+                #print("post mutation: " + torus[i][j][0])
+                
+        #write to new file every torus completion
+        file = open("run_" + str(iteration) + ".txt",'w')   # Trying to create a new file or open one  
+        iteration+=1
         for i in range(0,col_length):
             for j in range(0,row_length):
-                final_file_write.write(torus[i][j][0] + " " + torus[i][j][1]  + "\n")
-        final_file_write.write("\n")
-                    
+                file.write(str(datetime.now()) + " genetic: " + re.sub(r'\W+', '', torus[i][j][0]) + " fitness: " + str(torus[i][j][1])  + "\n")
+        file.close()
+        c.refresh()    
 if __name__ == "__main__": 
+    #initial()
     final_process()
+    
+    
+    
+    
       

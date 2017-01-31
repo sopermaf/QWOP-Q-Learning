@@ -1,9 +1,7 @@
 from dependancies import *
-from learning import *
-import time
-    
-def get_rand_bool():
-    return bool(random.getrandbits(1))
+import learning
+import reader
+r = reader.Reader()
 
 class Controller(object):
     def __init__(self):
@@ -51,9 +49,7 @@ class Controller(object):
     def runner_fitness_test(self, genetic):
         distance = 0
         index = 0
-        r = Reader()
-        stop_time = 60 + time.clock()
-        
+        stop_time = 60 + time.clock()        
         #loop executes the run until crashed state or time is finished
         while check_for_restart_image() == False and time.clock() <= stop_time:
             self.makeMove(genetic[index])   #make an individual key combination
@@ -62,24 +58,35 @@ class Controller(object):
             if index >= len(genetic):   #repeat the genetic sequence when the end is reached
                 index = 0
             
+            distance = r.get_distance()
             sleep(0.150)
         
-        #check that the runner didn't crash, if so return the distance
-        if check_for_restart_image() == False:
-            distance = r.get_distance()
-        
+        #check that the runner didn't crash, if so return the distance. DECIDED TO USE DISTANCE INSTEAD. WERENT GETTING FAR.
+        r.distance_last_output = 0.2
         return distance
-    
+    '''
     def running(self):  
         while(True): 
-            gen_sequence = create_runner()
+            gen_sequence = learning.create_runner()
             self.runner_fitness_test(gen_sequence)
             sleep(0.150)    #150ms sleep between steps like in the paper on genetic
             #read distance
             self.check_for_end()    #STORE THE STRING IN THIS FUNCTION TO FILE?          
-                        
+    ''' 
+    
+    def refresh(self):
+        pyautogui.moveTo(player_x+200, player_y)  
+        pyautogui.click()
+        pyautogui.hotkey('command', 'r') 
+        time.sleep(3)   
+        
     def start(self):
-        start_game = [player_x+100,player_y+100]
+        start_game = [player_x+200,player_y+200]
         pyautogui.click(start_game)
         pyautogui.click(start_game)
-        self.running()
+        #self.running()
+
+'''
+if __name__ == "__main__": 
+    start()
+'''
